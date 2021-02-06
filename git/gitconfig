@@ -1,19 +1,19 @@
 [color]
-  ui = auto
+	ui = auto
 
 [core]
-  excludesfile = $HOME/.gitignore
+	excludesfile = $HOME/.gitignore
 
 [filter "lfs"]
-  # https://mydeveloperplanet.com/2018/10/31/git-lfs-why-and-how-to-use/
-  required = true
-  clean = git-lfs clean -- %f
-  smudge = git-lfs smudge -- %f
-  process = git-lfs filter-process
+	# https://mydeveloperplanet.com/2018/10/31/git-lfs-why-and-how-to-use/
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
 
 [init]
-  defaultBranch = main
+	defaultBranch = main
 
 [user]
-  name = Mike Prince
-  email = git@mikeprince.co.uk
+	name = Mike Prince
+	email = git@mikeprince.co.uk
