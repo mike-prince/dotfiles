@@ -1,0 +1,57 @@
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+# Freely available high-quality data compressor
+brew "bzip2"
+# Distributed revision control system
+brew "git"
+# Small git utilities
+brew "git-extras"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Popular GNU data compression program
+brew "gzip"
+# Command-line oriented TCP/IP packet assembler/analyzer
+brew "hping"
+# Improved top (interactive process viewer)
+brew "htop"
+# Simple zero-configuration command-line HTTP server
+brew "http-server"
+# 'traceroute' and 'ping' in a single tool
+brew "mtr"
+# Port scanning utility for large networks
+brew "nmap"
+# 7-Zip (high compression file archiver) implementation
+brew "p7zip"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.9"
+# IPv4/IPv6 subnet calculator
+brew "subnetcalc"
+# User interface to the TELNET protocol
+brew "telnet"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Executes a program periodically, showing output fullscreen
+brew "watch"
+# Internet file retriever
+brew "wget"
+# App to build and share containerized applications and microservices
+cask "docker"
+# Web browser
+cask "firefox"
+# Desktop client for GitHub repositories
+cask "github"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Music streaming service
+cask "spotify"
+# Git client
+cask "sublime-merge"
+# Text editor for code, markup and prose
+cask "sublime-text"
+# Native GUI tool for relational databases
+cask "tableplus"

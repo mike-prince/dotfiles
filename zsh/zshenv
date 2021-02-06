@@ -1,0 +1,19 @@
+#!/usr/bin/env zsh
+
+unsetopt GLOBAL_RCS # Do not read global configs
+
+# Eliminate duplicates in paths
+typeset -gU cdpath fpath path
+
+# Base path
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+# Set GOPATH
+export GOPATH="$HOME/go"
+
+# Build path
+PATH=$PATH:$GOPATH
+
+# Source dotfiles
+DOTFILES="$HOME/Code/dotfiles"
+source $DOTFILES/zsh/zshrc

@@ -1,0 +1,284 @@
+#!/usr/bin/env zsh
+
+#
+# Resources
+# http://zsh.sourceforge.net
+# http://zsh.sourceforge.net/Doc/Release/Options.html#Description-of-Options
+# https://wiki.archlinux.org/index.php/zsh
+#
+
+#
+# Profile zsh load
+# https://blog.askesis.pl/post/2017/04/how-to-debug-zsh-startup-time.html
+#
+#zmodload zsh/zprof
+
+#
+# Index
+#
+
+# Changing Directories
+# Completion
+# Expansion and Globbing
+# History
+# Initialisation
+# Input/Output
+# Job Control
+# Prompting
+# Scripts and Functions
+# Shell Emulation
+# Shell State
+# Zle
+# Aliases
+# Load ../**/*.zsh files
+
+#
+# Changing Directories
+#
+
+setopt auto_cd            # Change to directory without typing cd
+setopt auto_pushd         # Make cd push the old directory onto the directory stack.
+setopt pushd_silent       # Do not print the directory stack after pushd or popd.
+setopt pushd_ignore_dups  # Don't push duplicates onto the directory stack.
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+alias d='dirs -v | head -10'
+alias 1='cd ~1'
+alias 2='cd ~2'
+alias 3='cd ~3'
+alias 4='cd ~4'
+alias 5='cd ~5'
+alias 6='cd ~6'
+alias 7='cd ~7'
+alias 8='cd ~8'
+alias 9='cd ~9'
+
+# Make directory and change into it
+function mkcd() {
+  mkdir -p $@ && cd ${@:$#}
+}
+
+#
+# Completion
+#
+
+# Initialize the completion system
+autoload -Uz compinit
+
+# Only check .zcompdump once per 20 hours
+if [[ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' "$HOME/.zcompdump") ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+
+bindkey '^[[Z' reverse-menu-complete    # SHIFT+TAB to cycle menu in reverse
+
+#
+# Expansion and Globbing
+#
+
+#
+# History
+#
+
+HISTFILE="$HOME/.zsh_history"
+
+setopt BANG_HIST            # Treat the character ‘!’ specially.
+setopt EXTENDED_HISTORY     # Write timestamps and durations to the history file.
+setopt HIST_FIND_NO_DUPS    # When searching history find no duplicates even if not contiguous.
+setopt HIST_IGNORE_DUPS     # Do not record an event that was just recorded again.
+setopt HIST_IGNORE_ALL_DUPS # Delete an old recorded event if a new event is a duplicate.
+setopt HIST_IGNORE_SPACE    # Do not write to history file if first character is a space.
+setopt HIST_REDUCE_BLANKS   # Remove superfluous whitespace from history file.
+setopt HIST_VERIFY          # Load history line into line editor instead of expanding.
+setopt INC_APPEND_HISTORY   # Write to history file immediately instead of upon shell exit.
+setopt SHARE_HISTORY        # Share history between all sessions.
+
+# Ignore common commands
+HISTORY_IGNORE="(ls|cd|pwd|exit|cd ..)"
+
+# Increase history size
+HISTSIZE=1000
+SAVEHIST=$HISTSIZE
+
+# Enable history substring search
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^[[A" history-beginning-search-backward-end
+bindkey "^[[B" history-beginning-search-forward-end
+
+#
+# Initialisation
+#
+
+#
+# Input/Output
+#
+
+setopt CORRECT_ALL          # Try to correct the spelling of all arguments.
+setopt INTERACTIVE_COMMENTS # Allow comments even in interactive shells.
+
+#
+# Job Control
+#
+
+setopt NO_CHECK_JOBS        # Do not report the status of background jobs when the shell exits.
+setopt NO_HUP               # Do not send HUP to running jobs when the shell exits.
+
+#
+# Prompting
+#
+
+setopt PROMPT_SUBST         # Expansions are performed in prompts.
+
+# Load version control info
+autoload -Uz vcs_info
+
+precmd() {
+  vcs_info
+  psvar=()
+  [[ -n $vcs_info_msg_0_ ]] && psvar[1]=" $vcs_info_msg_0_"
+  [[ -n $(prompt_git_dirty) ]] && psvar[2]=" *"
+  [[ -n $(prompt_git_check ahead) ]] && psvar[3]="$(prompt_git_check ahead)"
+  [[ -n $(prompt_git_check behind) ]] && psvar[4]="$(prompt_git_check behind)"
+}
+
+zstyle ':vcs_info:*' enable git   # Enable git support
+zstyle ':vcs_info:*' formats '%b' # Format the vcs_info_msg_0_ variable
+
+# Check if the current directory is a git repo and if it's dirty
+prompt_git_dirty() {
+  local dirty
+  git rev-parse --is-inside-work-tree &> /dev/null
+  if (( $? == 0 )); then
+    dirty=$(git status --short)
+  fi
+  echo $dirty
+}
+
+# Function to check if the current git repo is ahead/behind it's upstream
+prompt_git_check() {
+  local ahead behind
+
+  case "$1" in
+    ahead )
+      ahead=$(git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l | xargs)
+      (( $ahead )) && echo "⇡${ahead}" ;;
+    behind )
+      behind=$(git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l | xargs)
+      (( $behind )) && echo "⇣${behind}" ;;
+  esac
+}
+
+PROMPT=''                   # Clear prompt
+PROMPT+='%F{blue}%1~'       # Add pwd
+PROMPT+='%F{yellow}%1v'     # Add git branch
+PROMPT+='%F{red}%2v'        # Add git dirty
+PROMPT+='%F{green}%3v'      # Add git ahead
+PROMPT+='%F{red}%4v'        # Add git behind
+PROMPT+='%F{blue} ❯%f '     # Add prompt character
+PROMPT2='%_%F{#C795AE} ❯%f '
+
+#
+# Scripts and Functions
+#
+
+setopt MULTIOS              # Perform implicit tees/cats when multiple redirections are attempted.
+
+#
+# Shell Emulation
+#
+
+#
+# Shell State
+#
+
+#
+# Zle
+#
+
+setopt NO_BEEP              # Do no beep on error in ZLE.
+setopt COMBINING_CHARS      # Combine zero-length punctuation characters.
+
+#
+# Aliases
+#
+
+# Restart zsh session (not just source config)
+alias zsh_restart='exec zsh'
+
+# Listing
+alias l='ls -GH1'
+alias la='ls -GHa'
+alias ll='ls -GHlh'
+alias lla='ls -GHlah'
+alias ls='ls -GHF'
+alias sl='ls'
+
+# Tree helpers
+alias treed='tree -d'                 # Directories only
+alias tree1='tree -L 1 --dirsfirst'   # Limit to 1 level
+alias tree2='tree -L 2 --dirsfirst'   # Limit to 2 levels
+alias tree3='tree -L 3 --dirsfirst'   # Limit to 3 levels
+
+# List available aliases, functions and parameters
+alias lsalias="print -rl -- ${(k)aliases} | sort"
+alias lsfunction="print -rl -- ${(k)functions} | grep -E '^[^_]' | sort"
+alias lsparam="print -rl -- ${(k)parameters} | sort"
+
+# Print each PATH entry on a separate line
+alias lspath="echo ${PATH//:/\\\n}"
+
+# VSCode shortcut
+alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+
+#
+# Functions
+#
+
+# Zsh launch timer
+zsh_timer() {
+  local count="$1"
+  if (( $# != 1 )); then
+    count=10
+  fi
+  for i in $(seq 1 "$count"); do /usr/bin/time /bin/zsh -i -c exit; done;
+}
+
+# Zsh profiling
+zsh_profile() {
+  # Enable profiling in zshrc
+  sed -i '' -e 's/^#zmodload/zmodload/' "$DOTFILES/zsh/zshrc"
+  sed -i '' -e 's/^#zprof/zprof/' "$DOTFILES/zsh/zshrc"
+
+  # Profile zsh
+  /bin/zsh -i -c exit
+
+  # Disable profiling in zshrc
+  sed -i '' -e 's/^zmodload/#zmodload/' "$DOTFILES/zsh/zshrc"
+  sed -i '' -e 's/^zprof/#zprof/' "$DOTFILES/zsh/zshrc"
+}
+
+#
+# Load ../**/*.zsh files
+#
+
+if [[ -d "$DOTFILES" ]]; then
+  for zshfile ($DOTFILES/**/*.zsh); do
+    source "${zshfile}"
+  done
+fi
+
+#
+# End profiling zsh load
+#
+#zprof
