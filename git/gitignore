@@ -1,0 +1,13 @@
+# macos
+._*
+.DS_Store
+.Spotlight-V100
+.Trash*
+_ARCHIVE
+Thumbs.db
+
+# Common
+cache/
+dist/
+dst/
+tmp/

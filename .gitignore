@@ -1,0 +1,14 @@
+# macOS
+._*
+.DS_Store
+.Spotlight-V100
+.Trash*
+Thumbs.db
+
+# Zsh
+.zcompdump
+.zsh_history
+.zsh_sessions
+
+# Secure
+private.zsh

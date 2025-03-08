@@ -1,0 +1,31 @@
+[alias]
+    br = branch
+    ci = commit
+    cm = commit -m
+    co = checkout
+    dc = diff --cached
+    df = diff
+    last = log -1 HEAD
+    lg = log --oneline --graph --all
+    rba = rebase --abort
+    rbc = rebase --continue
+    ss = status -s
+    st = status
+    undo = reset --soft HEAD^
+    unstage = reset HEAD --
+
+[color]
+	ui = auto
+
+[core]
+	excludesfile = ~/.gitignore
+
+[init]
+	defaultBranch = main
+
+[push]
+    default = current
+    autoSetupRemote = true # Automatically sets remote tracking on first push
+
+[pull]
+    rebase = true # Enables rebase instead of merge for cleaner history
