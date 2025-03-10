@@ -373,4 +373,4 @@ fi
 # Private 
 #
 
-[[ -f $DOTFILES/private ]] && source "$DOTFILES/private"
+[[ -f $DOTFILES/zsh/private.zsh ]] && source "$DOTFILES/zsh/private.zsh"
