@@ -156,6 +156,9 @@ setopt NO_HUP        # Do not send HUP to running jobs when the shell exits.
 autoload -Uz vcs_info
 
 precmd() {
+  # Set the tab title to the current directory
+  echo -ne "\e]1;${PWD##*/}\a"
+
   vcs_info
   psvar=()
   [[ -n $vcs_info_msg_0_ ]] && psvar[1]="$vcs_info_msg_0_ "
