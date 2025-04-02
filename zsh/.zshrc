@@ -313,6 +313,11 @@ cd() {
     t
 }
 
+myip() {
+  printf "\nIPv4: %s\n" "$(curl -s -4 https://ifconfig.co)"
+  printf "IPv6: %s\n\n" "$(curl -s -6 https://ifconfig.co)"
+}
+
 # Zsh launch timer
 zsh_timer() {
   local count="$1"
