@@ -209,18 +209,35 @@ prompt_git_check() {
   esac
 }
 
+zle-keymap-select() {
+  if [[ $KEYMAP == vicmd ]]; then
+    PROMPT_MARKER="%F{blue}❮%f"
+  else
+    PROMPT_MARKER="%F{yellow}❯%f"
+  fi
+  zle reset-prompt
+}
+zle -N zle-keymap-select
+
+function vi_mode_prompt_init() {
+  zle-line-init() { zle-keymap-select; }
+  zle -N zle-line-init
+}
+vi_mode_prompt_init
+
 PROMPT=''                # Clear prompt
 PROMPT+='%1~ '           # Add pwd
 PROMPT+='%F{blue}%1v'    # Add git branch
 PROMPT+='%F{red}%2v'     # Add git dirty
 PROMPT+='%F{green}%3v'   # Add git ahead
 PROMPT+='%F{red}%4v'     # Add git behind
-PROMPT+='%F{yellow}❯%f ' # Add prompt character
+#PROMPT+='%F{yellow}❯%f ' # Add prompt character
+PROMPT+='%F{yellow}${PROMPT_MARKER}%f ' # Add dynamic prompt character for vi mode
 
 # precmd() { vcs_info }
 # precmd_functions+=( precmd_vcs_info )
 
-# setopt PROMPT_SUBST
+setopt PROMPT_SUBST
 
 # PROMPT='%1~ %F{green}${vcs_info_msg_0_}%f%# '
 
@@ -248,6 +265,8 @@ setopt MULTIOS # Perform implicit tees/cats when multiple redirections are attem
 
 setopt NO_BEEP         # Do no beep on error in ZLE.
 setopt COMBINING_CHARS # Combine zero-length punctuation characters.
+
+bindkey -v             # Set vi mode
 
 #
 # Aliases
@@ -378,7 +397,7 @@ if [[ $PWD == $HOME ]]; then
 fi
 
 #
-# Private 
+# Private
 #
 
 [[ -f $DOTFILES/zsh/private.zsh ]] && source "$DOTFILES/zsh/private.zsh"
